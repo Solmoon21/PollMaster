@@ -1,4 +1,13 @@
 <?php
+    include "storage.php";
+    session_start();
+    $db = new Storage(new JsonIO("users.json"));
+    $user = [];
+    $isLogged = false;
+    if(isset($_SESSION['user'])){
+        $isLogged = true;
+        $user = $db->findById($_SESSION['user']);
+    }
     include "poll.php";
     
     $p = new Poll(1,"Title",["o1","o2"],"Today","Tomorrow",false);
@@ -19,8 +28,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        function Redirect(pid){
+            <?php if($isLogged): ?>
+                window.location.href = "vote.php?id="+pid
+            <?php endif; ?>
+            <?php if(!$isLogged): ?>
+                window.location.href = "login.php"
+            <?php endif; ?>
+        }
+    </script>
 </head>
 <body>
+    <header>
+      <nav>
+        <?php if(!$user): ?>
+            <a href="login.php" class="">Login</a>
+            <a href="register.php" class="">Register</a>
+        <?php endif; ?>
+        
+        <?php if($user && $user['isAdmin']): ?>
+            <a href="pollmake.php">Create</a>
+        <?php endif; ?>
+      </nav>
+    </header>
+
     <h1>Controversies Collected</h1>
     <div id="info">
         <p>
@@ -35,7 +67,7 @@
                     <div class="poll">
                         <div><?= $poll->id ?>-<?= $poll->title?></div>
                         <div><?= $poll->start ?> TO <?= $poll->end ?></div>
-                        <div><input type="button" value="Vote" onclick="window.location='vote.php?id=<?= $poll->id ?>'"></div>
+                        <div><input type="button" value="Vote" onclick="Redirect(<?=$poll->id?>)"></div>
                     </div>
                 </li>    
             <?php endforeach; ?>

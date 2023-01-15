@@ -1,0 +1,16 @@
+{
+    "63c41ba490880": {
+        "username": "min",
+        "email": "min@gmail.hu",
+        "password": "$2y$10$8d3Z0sXb2eablKrlMQYAwONscIdaYZCJff39BeFSdhcBTR8pFiziW",
+        "isAdmin": false,
+        "id": "63c41ba490880"
+    },
+    "63c42fdd8fe79": {
+        "username": "admin",
+        "email": "admin@gmail.hu",
+        "password": "$2y$10$AHJRiQialZdOo\/t8YSKXQedwiPHTBPps\/CCoaJ8vytlna7CyWH5e2",
+        "isAdmin": true,
+        "id": "63c42fdd8fe79"
+    }
+}
