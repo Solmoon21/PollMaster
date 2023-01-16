@@ -36,5 +36,5 @@ The worst result of a disciplinary offence can be the expulsion of the student.
 
 ## Extra tasks (extra 5 pts)
 
-[ ] Admin feature: the admin user can create groups from the existing users and can assign polls to the groups with one click at the creation of the poll (3 pts)
+[x] Admin feature: the admin user can create groups from the existing users and can assign polls to the groups with one click at the creation of the poll (3 pts)
 [x] Admin feature: when the admin user is logged in, an additional button is shown on the main page where the admin can edit the data of the poll which is updated in the saved data (2 pts)

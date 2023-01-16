@@ -20,6 +20,14 @@
     $opts = "";
 
     $polldb = new Storage(new JsonIO("polls.json"));
+    $userdb = new Storage(new JsonIO("users.json"));
+    $users = $userdb->findAll();
+    $groups = [];
+    foreach($users as $u){
+       $groups = array_merge($groups,$u['groups']);
+    }
+    $groups[] = "All";
+    $groups = array_unique($groups);
 
     function validate($get,&$data,&$error){
         $data = $get;
@@ -72,8 +80,6 @@
     
     $text = count($data)<=1 ? "" : ($succ ? "Your poll has been created" : "Your poll has missing attributes");
     if($succ){
-        
-
         $data['options'] = array_filter(explode("\r\n",$data['options']));
         $data['voted'] = [];
         $data['users'] = [];
@@ -81,14 +87,14 @@
             $data['answers'][$o] = 0;
         }
         if(!isset($_GET['id'])){
-            $data['start'] = date('n/j/Y',strtotime($data['start']));
+            //$data['start'] = date('Y-m-d H-i-s',strtotime(urldecode($data['start'])));
+            $data['start'] = strtotime("now");
             $polldb->add($data);
         }
         else{
             $data['start'] = $editpoll['start'];
             $polldb->update($_GET['id'],$data);
         }
-            
     }
 ?>
 
@@ -139,7 +145,7 @@
             <input type="radio" name="isMultiple" id="No" value=0 <?php if((isset($_GET['isMultiple'])&&$_GET['isMultiple']=="0") || (isset($editpoll['isMultiple'])&&$editpoll['isMultiple']=="0")) echo "checked = checked"; ?>>
         <br><br>
         <label for="End">Deadline:</label>
-        <input type="date" name="end" id="End" value= <?= $editpoll['end'] ?? "2023-01-15"?> >
+        <input type="date" name="end" id="End" value= <?= $editpoll['end'] ?? ""?> >
         <?php 
             if (isset($error['end'])){
                 echo "<span class='error'>";
@@ -148,6 +154,13 @@
             }
         ?>
         <br><br>
+        <label for="Group">Select Group</label>
+        <select name="group" id="Group">
+            <?php foreach($groups as $g): ?>
+                <option value=<?=$g?>><?=$g?></option>
+            <?php endforeach; ?>
+        </select>
+
         <input name="start" type="hidden">
         <?php if(isset($_GET['id'])): ?>
             <input name="id" type="hidden" value=<?= $_GET['id'] ?>>
@@ -159,23 +172,6 @@
     <?php if(!empty($text)): ?>
         <h1 style="text-align:center" class= <?= $succ?"success":"error" ?>> <?=$text?>  </h1>
     <?php endif; ?>
-
-    <script>
-        var form = document.getElementById('f')
-        var start = document.querySelector("input[name='start']");
-        form.addEventListener('submit',function(event){
-            <?php if(!isset($_GET['id'])): ?>
-                var now = new Date().toLocaleDateString() // => 1/15/2023
-                start.value = now
-            <?php endif; ?>
-            
-            <?php if(isset($_GET['id'])): ?>
-                start.value = <?= $editpoll['start'] ?>
-            <?php endif; ?>
-
-
-        })
-    </script>
 
 </body>
 </html>

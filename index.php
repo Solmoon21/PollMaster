@@ -3,22 +3,22 @@
     session_start();
     $polldb = new Storage(new JsonIO("polls.json"));
     $expdb = new Storage(new JsonIO("expire.json"));
-    $polls = $polldb->findAll();
+    $polls = [];
     foreach ($polls as $p) {
-        if(strtotime(date('Y-m-d')) > strtotime($p['end'])){
+        if(strtotime("now") > strtotime($p['end'])){
             $expdb->update($p['id'],$p);
             $polldb->delete($p['id']);
         }
     }
     $polls = $polldb->findAll();
     usort($polls,function($b,$a){
-        return strtotime($a['start']) - strtotime($b['start']);
+        return $a['start'] - $b['start'];
     });
     $expires = $expdb->findAll();
     usort($expires,function($b,$a){
-        return strtotime($a['start']) - strtotime($b['start']);
+        return $a['start'] - $b['start'];
     });
-
+    //print_r($polls);
     $userdb = new Storage(new JsonIO("users.json"));
     $users = $userdb->findAll();
     $user = [];
@@ -26,6 +26,20 @@
     if(isset($_SESSION['user'])){
         $isLogged = true;
         $user = $userdb->findById($_SESSION['user']);
+        if(!$user['isAdmin']){
+            foreach ($polls as $key => $value) {
+                if(!in_array($value['group'],$user['groups'])){
+                    unset($polls[$key]);
+                }
+            }
+        }
+    }
+    else{
+        foreach ($polls as $key => $value) {
+            if($value['group'] != 'All'){
+                unset($polls[$key]);
+            }
+        }
     }
 
     function alphaTostr($alpha){
@@ -71,8 +85,9 @@
         <?php endif; ?>
         
         <?php if($user && $user['isAdmin']): ?>
-            <a href="pollmake.php">Create</a>
+            <a href="pollmake.php">Make Polls</a>
             <a href="pollview.php">Edit/Delete</a>
+            <a href="group.php">Make Groups</a>
         <?php endif; ?>
       </nav>
     </header>
@@ -83,7 +98,7 @@
             We make individual ideas become community decisions. From simple things as choosing a meal to elaborate voting for a PM, this is the right place.
         </p>
     </div>
-    <?php if(count($polls)>0): ?>
+    <?php if(true): ?>
     <h2>Ongoing</h2>
     <div class="poll-table">
         <ul>
@@ -91,9 +106,9 @@
                 <li>
                     <div class="poll">
                         <div><?= $poll['id']?>-<?= $poll['title']?></div>
-                        <div><?= $poll['start'] ?> TO <?= $poll['end'] ?></div>
+                        <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end']?></div>
                         <?php 
-                            $caption = in_array($user['username'],$poll['voted']) ? "Edit" : "Vote";
+                            $caption = isset($_SESSION['user']) && in_array($user['username'],$poll['voted']) ? "Edit" : "Vote";
                         ?>
                         <div><input type="button" value=<?= $caption ?> onclick='Redirect(<?= alphaTostr($poll["id"]) ?>)'></div>
                     </div>

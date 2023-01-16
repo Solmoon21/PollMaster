@@ -43,6 +43,7 @@
     if(validate($_GET,$data,$error)){
         unset($data['repassword']);
         $data['isAdmin'] = FALSE;
+        $data['groups'] = [];
         $data['password'] = password_hash($data['password'],PASSWORD_DEFAULT); 
         $db->add($data);
         header('location: login.php');
