@@ -12,5 +12,12 @@
         "password": "$2y$10$AHJRiQialZdOo\/t8YSKXQedwiPHTBPps\/CCoaJ8vytlna7CyWH5e2",
         "isAdmin": true,
         "id": "63c42fdd8fe79"
+    },
+    "63c4655127f32": {
+        "username": "tutu",
+        "email": "tutu@gmail.hu",
+        "password": "$2y$10$ZABHjhHGgAl4kjmN9gIje.G1S5NyjIldcHocfRy4Y4.T6LbOKRveK",
+        "isAdmin": false,
+        "id": "63c4655127f32"
     }
 }

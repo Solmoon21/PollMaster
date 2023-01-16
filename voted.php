@@ -1,6 +1,11 @@
 <?php
-    include "poll.php";
-    $p = new Poll(1,"Title",["A1","A2","A3"],"Today","Tomorrow",false);
+    session_start();
+
+    include "storage.php";
+    $polldb = new Storage(new JsonIO("polls.json"));
+    $userdb = new Storage(new JsonIO("users.json"));
+    $p = $polldb->findById($_POST['id']);
+    $u = $userdb->findById($_SESSION['user']);
     $data = [];
     $text = "__PlaceHolder__";
     $succ = true;
@@ -8,7 +13,7 @@
     function validate($post,&$data,$p){
         $data = $post;
         if(!isset($data['answer'])){
-            foreach ($p->options as $o) {
+            foreach ($p['options'] as $o) {
                 if(isset($data[$o])){
                     return true;
                 }
@@ -17,9 +22,22 @@
         }
         return true;
     }
-
-    $text = ($succ = validate($_POST,$data,$p)) ? "Your vote has been recorded" : "An Answer must be selected";
-
+    $succ = validate($_POST,$data,$p);
+    if($succ){
+        $p['voted'][] = $u['username'];
+        foreach ($p['options'] as $o) {
+            if(isset($_POST[$o]))
+                $p['answers'][$o]++;
+            if(isset($_POST['answer']) && $_POST['answer']==$o){
+                $p['answers'][$o]++;
+            }
+        }
+        
+        $polldb->update($p['id'],$p);
+        $text = "Your vote has been recorded";
+    }else{
+        $text = "An Answer must be selected";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +51,7 @@
 </head>
 <body>
     <h1 style="text-align:center" class= <?= $succ?"success":"error" ?>> <?=$text?>  </h1>
-    <button onclick="location.href='vote.php'">Change Vote</button>
+    <button onclick="location.href='vote.php?id=<?=$p['id']?>'">Change Vote</button>
     <button onclick="location.href='index.php'">Home</button>
 </body>
 </html>

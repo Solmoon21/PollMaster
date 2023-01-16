@@ -1,12 +1,33 @@
 <?php
+    include "storage.php";
+    session_start();
+    if(!isset($_SESSION['user']))
+    {
+        header("location:login.php");
+        exit();
+    }
+    else{
+        $userdb = new Storage(new JsonIO("users.json"));
+        $u = $userdb->FindById($_SESSION['user']);
+        if(!$u['isAdmin']){
+            header("location:login.php");
+            exit();
+        } 
+    }
     $data = [];
     $error = [];
-    $succ = true;
+    $succ = false;
+    $opts = "";
+
+    $polldb = new Storage(new JsonIO("polls.json"));
 
     function validate($get,&$data,&$error){
         $data = $get;
-        if(count($data)>0){
-            if(!isset($get['isMultiple']) || empty($get['isMultiple'])){
+        if(count($data)<=1 )
+            return False;
+
+        if(count($data)>1){
+            if(!isset($get['isMultiple']) ){
                 $error['isMultiple'] = "Type must be given";
             }
         }
@@ -27,19 +48,48 @@
             if(empty($get['end'])){
                 $error['end'] = "Deadline must be given";
             }
-        }
-
-        if(isset($get['isMultiple'])){
-            if(empty($get['isMultiple'])){
-                $error['isMultiple'] = "Type must be given";
+            else if(isset($get['start'])){
+                
+                if(strtotime($get['end'])<strtotime($get['start']))
+                    $error['end'] = "Time Travel?";
+            }
+            else{
+                $date = strtotime($get['end']);
+                $data['end'] = date('n/j/Y',strtotime($get['end']));
             }
         }
 
         return count($error) == 0;
     }
+    
+    $editpoll = [];
+    if(isset($_GET['id'])){
+        $editpoll = $polldb->findById($_GET['id']);
+    }
+    
     $succ = validate($_GET,$data,$error);
-    $text = count($data)==0 ? "" : ($succ ? "Your poll has been created" : "Your poll has missing attributes");
+    
+    
+    $text = count($data)<=1 ? "" : ($succ ? "Your poll has been created" : "Your poll has missing attributes");
+    if($succ){
+        
 
+        $data['options'] = array_filter(explode("\r\n",$data['options']));
+        $data['voted'] = [];
+        $data['users'] = [];
+        foreach($data['options'] as $o){
+            $data['answers'][$o] = 0;
+        }
+        if(!isset($_GET['id'])){
+            $data['start'] = date('n/j/Y',strtotime($data['start']));
+            $polldb->add($data);
+        }
+        else{
+            $data['start'] = $editpoll['start'];
+            $polldb->update($_GET['id'],$data);
+        }
+            
+    }
 ?>
 
 <!DOCTYPE html>
@@ -52,8 +102,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <a href="index.php">Main</a><br><br>
     <form id="f" action="" method="get">
-        <label for="Title">Title:</label> <input type="text" name="title" id="Title" value=<?= $_GET['title']?? ""?>>
+        <label for="Title">Title:</label> <input type="text" name="title" id="Title" value=<?= $_GET['title']?? ($editpoll['title'] ?? "")?>>
         <?php 
             if (isset($error['title'])){
                 echo "<span class='error'>";
@@ -64,7 +115,7 @@
         <br>
         <br>
         <label for="Options">Options:</label> 
-        <textarea type="text" name="options" id="Options" value=<?= $_GET['options']?? ""?> rows="5" cols="80" ></textarea>
+        <textarea type="text" name="options" id="Options" rows="5" cols="80" ></textarea>
         <?php 
             if (isset($error['options'])){
                 echo "<span class='error'>";
@@ -83,12 +134,12 @@
         ?>
         <br><br>
         <label for="Yes">Yes</label> 
-        <input type="radio" name="isMultiple" id="Yes" value=1 <?php if(isset($_GET['isMultiple'])&&$_GET['isMultiple']=="1") echo "checked = checked"; ?>  >
+        <input type="radio" name="isMultiple" id="Yes" value=1 <?php if((isset($_GET['isMultiple'])&&$_GET['isMultiple']=="1") || (isset($editpoll['isMultiple'])&&$editpoll['isMultiple']=="1")) echo "checked = checked"; ?>  >
         <label for="No">No</label> 
-            <input type="radio" name="isMultiple" id="No" value=0 <?php if(isset($_GET['isMultiple'])&&$_GET['isMultiple']=="0") echo "checked = checked"; ?>>
+            <input type="radio" name="isMultiple" id="No" value=0 <?php if((isset($_GET['isMultiple'])&&$_GET['isMultiple']=="0") || (isset($editpoll['isMultiple'])&&$editpoll['isMultiple']=="0")) echo "checked = checked"; ?>>
         <br><br>
         <label for="End">Deadline:</label>
-        <input type="date" name="end" id="End">
+        <input type="date" name="end" id="End" value= <?= $editpoll['end'] ?? "2023-01-15"?> >
         <?php 
             if (isset($error['end'])){
                 echo "<span class='error'>";
@@ -98,8 +149,12 @@
         ?>
         <br><br>
         <input name="start" type="hidden">
-        <button type="submit">Create</button>
+        <?php if(isset($_GET['id'])): ?>
+            <input name="id" type="hidden" value=<?= $_GET['id'] ?>>
+        <?php endif; ?>
+        <button type="submit"><?= isset($_GET['id'])?"Edit":"Create"?></button>
     </form>
+    
 
     <?php if(!empty($text)): ?>
         <h1 style="text-align:center" class= <?= $succ?"success":"error" ?>> <?=$text?>  </h1>
@@ -109,10 +164,16 @@
         var form = document.getElementById('f')
         var start = document.querySelector("input[name='start']");
         form.addEventListener('submit',function(event){
-            var now = new Date().toLocaleDateString() // => 1/15/2023
-            // new Date.toLocaleString() => 1/15/2023, 5:18:40 AM
-            start.value = now // string
-            //console.log(typeof start.value) 
+            <?php if(!isset($_GET['id'])): ?>
+                var now = new Date().toLocaleDateString() // => 1/15/2023
+                start.value = now
+            <?php endif; ?>
+            
+            <?php if(isset($_GET['id'])): ?>
+                start.value = <?= $editpoll['start'] ?>
+            <?php endif; ?>
+
+
         })
     </script>
 

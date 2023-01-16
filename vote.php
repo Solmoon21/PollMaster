@@ -1,6 +1,15 @@
 <?php
-    include "poll.php";
-    $p = new Poll(1,"Title",["A1","A2","A3"],"Today","Tomorrow",false);
+    session_start();
+    if(!isset($_SESSION['user'])){
+        header("location:index.php");
+        exit();
+    }
+
+    include "storage.php";
+    $polldb = new Storage(new JsonIO("polls.json"));
+    $p = $polldb->findById($_GET['id']);
+    $userdb = new Storage(new JsonIO("users.json"));
+    $u = $userdb->findById($_SESSION['user']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,32 +21,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- $p = Storage[$_GET[id]]  -->
-    <h1><?= $p->id ?>-<?= $p->title ?></h1>
+    <h1><?= $p['id'] ?>-<?= $p['title'] ?></h1>
     <form method="POST" action="voted.php">
-    <input type="hidden" name="id" value=<?=$p->id?> />
-        <?php if($p->isMultiple): ?>
-            <?php foreach($p->options as $option): ?>
-                <input type="checkbox" name=<?= $options ?>><?= $option ?>
+    <input type="hidden" name="id" value=<?=$p['id']?> />
+        <?php if($p['isMultiple']): ?>
+            <?php foreach($p['options'] as $option): ?>
+                <input type="checkbox" name=<?= $option ?>><?= $option ?>
                 <br>
             <?php endforeach; ?>
         <?php endif; ?>
 
-        <?php if(!$p->isMultiple): ?>
-            <?php foreach($p->options as $option): ?>
+        <?php if(!$p['isMultiple']): ?>
+            <?php foreach($p['options'] as $option): ?>
                 <input type="radio" name="answer" value=<?= $option?>><?= $option ?>
                 <br>
             <?php endforeach; ?>
         <?php endif; ?>
         <input type="submit" value="submit">
-        <!-- handle data storage in voted.php -->
     </form>
     
     <div>
-        Votes are accepted until <?= $p->end ?>
+        Votes are accepted until <?= $p['end'] ?>
     </div>
     <div>
-        Created since <?= $p->start ?>
+        Created since <?= $p['start'] ?>
     </div>
 </body>
 </html>
