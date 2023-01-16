@@ -19,6 +19,7 @@
     $succ = false;
     $opts = "";
 
+    
     $polldb = new Storage(new JsonIO("polls.json"));
     $userdb = new Storage(new JsonIO("users.json"));
     $users = $userdb->findAll();
@@ -81,17 +82,31 @@
     $text = count($data)<=1 ? "" : ($succ ? "Your poll has been created" : "Your poll has missing attributes");
     if($succ){
         $data['options'] = array_filter(explode("\r\n",$data['options']));
-        $data['voted'] = [];
-        $data['users'] = [];
-        foreach($data['options'] as $o){
-            $data['answers'][$o] = 0;
-        }
+        
+        
         if(!isset($_GET['id'])){
-            //$data['start'] = date('Y-m-d H-i-s',strtotime(urldecode($data['start'])));
+            foreach($data['options'] as $o){
+                $data['answers'][$o] = [];
+            }
+            $data['voted'] = [];
+            $data['users'] = [];
             $data['start'] = strtotime("now");
+           ;
+            $data['num'] = count($polldb->findAll()) + count(($expdb = new Storage(new JsonIO("expire.json")))->findAll());
             $polldb->add($data);
         }
         else{
+            $data['options'] = array_unique(array_merge($data['options'],$editpoll['options']));
+            foreach($data['options'] as $o){
+                if(!in_array($o,$editpoll['options'])){
+                    $data['answers'][$o] = [];
+                }
+                else{
+                    $data['answers'][$o] = $editpoll['answers'][$o];
+                }
+            }
+            $data['voted'] = $editpoll['voted'];
+            $data['users'] = $editpoll['users'];
             $data['start'] = $editpoll['start'];
             $polldb->update($_GET['id'],$data);
         }

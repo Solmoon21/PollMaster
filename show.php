@@ -26,11 +26,11 @@
     <a href="index.php">Main</a>
     <h1> <?= $p['id'] ?> <?= $p['title'] ?> </h1>
     <ul>
-        <?php foreach($p['options'] as $o): ?>
+        <?php foreach($p['answers'] as $key=>$value): ?>
             
             <li>
                 <?php 
-                    echo $o." ".$p['answers'][$o]." votes";
+                    echo $key." ".count($p['answers'][$key])." votes";
                 ?>
             </li>
 

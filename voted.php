@@ -25,13 +25,31 @@
     $succ = validate($_POST,$data,$p);
     if($succ){
         $p['voted'][] = $u['username'];
-        foreach ($p['options'] as $o) {
-            if(isset($_POST[$o]))
-                $p['answers'][$o]++;
-            if(isset($_POST['answer']) && $_POST['answer']==$o){
-                $p['answers'][$o]++;
+        if($p['isMultiple']){
+            foreach ($p['options'] as $o) {
+                if(isset($_POST[$o]) && !in_array($u['username'],$p['answers'][$o]))
+                    $p['answers'][$o][] = $u['username'];
+                else{
+                    $key = array_search($u['username'], $p['answers'][$o]);
+                    if (false !== $key) {
+                        unset($p['answers'][$o][$key]);
+                    }
+                }
             }
         }
+        else{
+            foreach ($p['options'] as $o) {
+                if(isset($_POST['answer']) && $_POST['answer']==$o && !in_array($u['username'],$p['answers'][$o]))
+                    $p['answers'][$o][] = $u['username'];
+                else{
+                    $key = array_search($u['username'], $p['answers'][$o]);
+                    if (false !== $key) {
+                        unset($p['answers'][$o][$key]);
+                    }
+                }
+            }
+        }
+        $p['voted'] = array_unique($p['voted']);
         
         $polldb->update($p['id'],$p);
         $text = "Your vote has been recorded";

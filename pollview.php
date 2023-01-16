@@ -1,4 +1,5 @@
 <?php
+    date_default_timezone_set('Europe/Budapest');
     include "storage.php";
     session_start();
     if(!isset($_SESSION['user']))
@@ -65,13 +66,14 @@
 </head>
 <body>
     <a href="index.php">Main</a>
+    <h2>Ongoing</h2>
     <div class="poll-table">
         <ul>
             <?php foreach($polls as $poll): ?>
                 <li>
                     <div class="admin-poll">
-                        <div><?= $poll['id']?>-<?= $poll['title']?></div>
-                        <div><?= $poll['start'] ?> TO <?= $poll['end'] ?></div>
+                        <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
+                        <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end'] ?></div>
                         <div><input type="button" value="Edit" onclick='Edit(<?= alphaTostr($poll["id"]) ?>)'></div>
                         <div><input type="button" value="Delete" onclick='Delete(<?= alphaTostr($poll["id"]) ?>)'></div>
                     </div>
@@ -79,14 +81,15 @@
             <?php endforeach; ?>
         </ul>
     </div>
-
+    <br><br>
+    <h2>Ended</h2>
     <div class="poll-table">
         <ul>
             <?php foreach($expires as $poll): ?>
                 <li>
                     <div class="poll">
-                        <div><?= $poll['id']?>-<?= $poll['title']?></div>
-                        <div><?= $poll['start'] ?> TO <?= $poll['end'] ?></div>
+                        <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
+                        <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end'] ?></div>
                         <div><input type="button" value="Delete" onclick='Delete(<?= alphaTostr($poll["id"]) ?>)'></div>
                     </div>
                 </li>    

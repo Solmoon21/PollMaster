@@ -1,9 +1,11 @@
 <?php
+    date_default_timezone_set('Europe/Budapest');
     include "storage.php";
     session_start();
     $polldb = new Storage(new JsonIO("polls.json"));
     $expdb = new Storage(new JsonIO("expire.json"));
     $polls = [];
+    $polls = $polldb->findAll();
     foreach ($polls as $p) {
         if(strtotime("now") > strtotime($p['end'])){
             $expdb->update($p['id'],$p);
@@ -18,7 +20,6 @@
     usort($expires,function($b,$a){
         return $a['start'] - $b['start'];
     });
-    //print_r($polls);
     $userdb = new Storage(new JsonIO("users.json"));
     $users = $userdb->findAll();
     $user = [];
@@ -28,7 +29,7 @@
         $user = $userdb->findById($_SESSION['user']);
         if(!$user['isAdmin']){
             foreach ($polls as $key => $value) {
-                if(!in_array($value['group'],$user['groups'])){
+                if($value['group'] != 'All' && !in_array($value['group'],$user['groups'])){
                     unset($polls[$key]);
                 }
             }
@@ -98,14 +99,14 @@
             We make individual ideas become community decisions. From simple things as choosing a meal to elaborate voting for a PM, this is the right place.
         </p>
     </div>
-    <?php if(true): ?>
+    
     <h2>Ongoing</h2>
     <div class="poll-table">
         <ul>
             <?php foreach($polls as $poll): ?>
                 <li>
                     <div class="poll">
-                        <div><?= $poll['id']?>-<?= $poll['title']?></div>
+                        <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
                         <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end']?></div>
                         <?php 
                             $caption = isset($_SESSION['user']) && in_array($user['username'],$poll['voted']) ? "Edit" : "Vote";
@@ -117,14 +118,13 @@
         </ul>
     </div>
     <br><br>
-    <?php endif;?>
     <h2>Ended</h2>
     <div class="poll-table">
         <ul>
             <?php foreach($expires as $poll): ?>
                 <li>
                     <div class="poll">
-                        <div><?= $poll['id']?>-<?= $poll['title']?></div>
+                        <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
                         <div><?= $poll['start'] ?> TO <?= $poll['end'] ?></div>
                         <div><input type="button" value="Show" onclick='Show(<?= alphaTostr($poll["id"]) ?>)'></div>
                     </div>

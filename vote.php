@@ -1,4 +1,5 @@
 <?php
+    date_default_timezone_set('Europe/Budapest');
     session_start();
     if(!isset($_SESSION['user'])){
         header("location:index.php");
@@ -10,6 +11,7 @@
     $p = $polldb->findById($_GET['id']);
     $userdb = new Storage(new JsonIO("users.json"));
     $u = $userdb->findById($_SESSION['user']);
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +46,7 @@
         Votes are accepted until <?= $p['end'] ?>
     </div>
     <div>
-        Created since <?= $p['start'] ?>
+        Created since <?=date("Y-m-d h:i",$p['start']) ?>
     </div>
 </body>
 </html>
