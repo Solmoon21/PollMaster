@@ -24,13 +24,13 @@
 </head>
 <body>
     <a href="index.php">Main</a>
-    <h1> <?= $p['id'] ?> <?= $p['title'] ?> </h1>
+    <h1> <?= $p['num']+1 ?> <?= $p['title'] ?> </h1>
     <ul>
         <?php foreach($p['answers'] as $key=>$value): ?>
             
             <li>
                 <?php 
-                    echo $key." ".count($p['answers'][$key])." votes";
+                    echo count($p['answers'][$key])." votes for ".$key;
                 ?>
             </li>
 

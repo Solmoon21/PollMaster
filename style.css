@@ -117,8 +117,27 @@ li {
     list-style-type: none;
 }
 
-.ended {
-    background-color: red;
+.navlink {
+    display: inline-block;
+    width: 80px;
+    padding-bottom: 2px;
+    background-color: #2a9d8f;
+    border: 2px solid black;
+    text-align: right;
+}
+
+a {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    padding-right: 5px;
+    text-decoration: none;
+}
+
+a:visited {
+    color: black;
+}
+
+a:link{
+    color: white;
 }
 
 .success {

@@ -77,8 +77,13 @@
     <header>
       <nav>
         <?php if(!$user): ?>
-            <a href="login.php" class="">Login</a>
-            <a href="register.php" class="">Register</a>
+            <div class="navlink">
+                <a href="login.php" class="">Login</a>
+            </div>
+            <div class="navlink">
+                <a href="register.php" class="">Register</a>
+            </div>
+            
         <?php endif; ?>
 
         <?php if(isset($_SESSION['user'])): ?>
@@ -125,7 +130,7 @@
                 <li>
                     <div class="poll">
                         <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
-                        <div><?= $poll['start'] ?> TO <?= $poll['end'] ?></div>
+                        <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end'] ?></div>
                         <div><input type="button" value="Show" onclick='Show(<?= alphaTostr($poll["id"]) ?>)'></div>
                     </div>
                 </li>    
