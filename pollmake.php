@@ -91,8 +91,13 @@
             $data['voted'] = [];
             $data['users'] = [];
             $data['start'] = strtotime("now");
-           ;
-            $data['num'] = count($polldb->findAll()) + count(($expdb = new Storage(new JsonIO("expire.json")))->findAll());
+            
+            $a = $userdb->findOne(["username" => "admin"]);
+            //print_r($a);
+            $a['pollmade'] += 1;
+            $userdb->update($a['id'],$a);
+            //$data['num'] = count($polldb->findAll()) + count(($expdb = new Storage(new JsonIO("expire.json")))->findAll());
+            $data['num'] = $a['pollmade'];
             $polldb->add($data);
         }
         else{

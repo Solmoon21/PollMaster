@@ -1,34 +1,25 @@
 {
-    "63c5e313dbb03": {
-        "title": "for all",
+    "63d5df941b5c7": {
+        "title": "poll2",
         "options": [
-            "1",
-            "2",
-            "3"
+            "r",
+            "e",
+            "a",
+            "s"
         ],
-        "isMultiple": "1",
-        "end": "2023-01-16",
+        "isMultiple": "0",
+        "end": "2023-01-24",
         "group": "All",
-        "start": 1673913107,
+        "start": 1674960788,
         "answers": {
-            "1": [
-                "admin",
-                "tutu"
-            ],
-            "2": [
-                "min"
-            ],
-            "3": [
-                "admin"
-            ]
+            "r": [],
+            "e": [],
+            "a": [],
+            "s": []
         },
-        "voted": [
-            "admin",
-            "min",
-            "tutu"
-        ],
+        "voted": [],
         "users": [],
-        "num": 1,
-        "id": "63c5e313dbb03"
+        "num": 2,
+        "id": "63d5df941b5c7"
     }
 }

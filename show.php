@@ -24,7 +24,7 @@
 </head>
 <body>
     <a href="index.php">Main</a>
-    <h1> <?= $p['num']+1 ?> <?= $p['title'] ?> </h1>
+    <h1> <?= $p['num'] ?> <?= $p['title'] ?> </h1>
     <ul>
         <?php foreach($p['answers'] as $key=>$value): ?>
             

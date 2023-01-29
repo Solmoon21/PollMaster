@@ -1,41 +1,11 @@
 {
-    "63c41ba490880": {
-        "username": "min",
-        "email": "min@gmail.hu",
-        "password": "$2y$10$8d3Z0sXb2eablKrlMQYAwONscIdaYZCJff39BeFSdhcBTR8pFiziW",
-        "isAdmin": false,
-        "groups": [
-            "a"
-        ],
-        "id": "63c41ba490880"
-    },
     "63c42fdd8fe79": {
         "username": "admin",
         "email": "admin@gmail.hu",
         "password": "$2y$10$AHJRiQialZdOo\/t8YSKXQedwiPHTBPps\/CCoaJ8vytlna7CyWH5e2",
         "isAdmin": true,
         "groups": [],
-        "id": "63c42fdd8fe79"
-    },
-    "63c4655127f32": {
-        "username": "tutu",
-        "email": "tutu@gmail.hu",
-        "password": "$2y$10$ZABHjhHGgAl4kjmN9gIje.G1S5NyjIldcHocfRy4Y4.T6LbOKRveK",
-        "isAdmin": false,
-        "groups": [
-            "f",
-            "gays"
-        ],
-        "id": "63c4655127f32"
-    },
-    "63c52c3523951": {
-        "username": "ryu",
-        "email": "ryu@gmail.hu",
-        "password": "$2y$10$2UXRz9uOc7921tvbcJ.WpeSfDjMEEttSQwKVq8W8kObV6N\/qQ3DRC",
-        "isAdmin": false,
-        "groups": [
-            "b"
-        ],
-        "id": "63c52c3523951"
+        "id": "63c42fdd8fe79",
+        "pollmade": 0
     }
 }

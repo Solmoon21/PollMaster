@@ -72,7 +72,7 @@
             <?php foreach($polls as $poll): ?>
                 <li>
                     <div class="admin-poll">
-                        <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
+                        <div><?= $poll['num']?>-<?= $poll['title']?></div>
                         <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end'] ?></div>
                         <div><input type="button" value="Edit" onclick='Edit(<?= alphaTostr($poll["id"]) ?>)'></div>
                         <div><input type="button" value="Delete" onclick='Delete(<?= alphaTostr($poll["id"]) ?>)'></div>
@@ -88,7 +88,7 @@
             <?php foreach($expires as $poll): ?>
                 <li>
                     <div class="poll">
-                        <div><?= $poll['num']+1?>-<?= $poll['title']?></div>
+                        <div><?= $poll['num']?>-<?= $poll['title']?></div>
                         <div><?= date("Y-m-d h:i",$poll['start']) ?> TO <?= $poll['end'] ?></div>
                         <div><input type="button" value="Delete" onclick='Delete(<?= alphaTostr($poll["id"]) ?>)'></div>
                     </div>

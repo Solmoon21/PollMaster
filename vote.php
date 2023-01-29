@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1><?= $p['num']+1 ?>-<?= $p['title'] ?></h1>
+    <h1><?= $p['num'] ?>-<?= $p['title'] ?></h1>
     <form method="POST" action="voted.php">
     <input type="hidden" name="id" value=<?=$p['id']?> />
         <?php if($p['isMultiple']): ?>
